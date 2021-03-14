@@ -4,10 +4,11 @@ import logo from '../../images/logo/logo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 import './nav.css'
+import { Link } from 'react-router-dom';
 const NavBar = () => {
     return (
         <Navbar expand="lg">
-            <Navbar.Brand href="#home"><img className="image-fluid w-50" src={logo} alt=""/></Navbar.Brand>
+            <Link className="nav-brand" to="/"><img className="image-fluid w-50" src={logo} alt=""/></Link>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Form className="m-auto" inline>
@@ -15,8 +16,8 @@ const NavBar = () => {
                     <Button variant="outline-success">Search</Button>
                 </Form>
                 <Nav className="ml-auto">
-                <Nav.Link className="nav-text" href="#home">Login</Nav.Link>
-                <Nav.Link className="nav-text" href="#link"><FontAwesomeIcon icon={faShoppingCart} /></Nav.Link>
+                <Link className="nav-link nav-text" to="/login">Login</Link>
+                <Link className="nav-link nav-text" to="/cart"><FontAwesomeIcon icon={faShoppingCart} /></Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

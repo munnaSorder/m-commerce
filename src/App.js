@@ -10,7 +10,11 @@ import {
 
 function App() {
   return (
-   <NavBar></NavBar>
+   <Router>
+     <Route path="/">
+     <NavBar />
+     </Route>
+   </Router>
   );
 }
 
