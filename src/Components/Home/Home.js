@@ -1,12 +1,20 @@
 import React from 'react';
-import { Col, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import Card from '../Card/Card';
+import fakeData from '../../fakeData/index'
+import ShoppingItem from '../Card/ShoppingItem';
+import './home.css'
 
 const Home = () => {
+    console.log(fakeData);
     return (
-        <Row>
-            <Col xs={8}>
-                <h1>Hello</h1>
+        <Row className="home-container">
+            <Col xs={8} md={8} className="mt-5">
+                <Row className="container">
+                    {
+                        fakeData.map(data => <ShoppingItem data={data} />)
+                    }
+                </Row>
             </Col>
             <Col xs={4}>
                 <Card />

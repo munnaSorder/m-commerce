@@ -58,7 +58,7 @@ const Card = () => {
                     <h5 className="">00</h5>
                 </div>
             </div>
-            <button className="btn btn-success w-100">Checkout</button>
+            <button className="btn btn-success w-100">CHECKOUT</button>
         </div>
     );
 };
