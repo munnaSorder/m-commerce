@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Form, FormControl, Navbar, Button, Nav } from 'react-bootstrap';
 import logo from '../../images/logo/logo.png'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 import './nav.css'
 import { Link } from 'react-router-dom';
+import { Badge } from '@material-ui/core';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+
 const NavBar = () => {
 
     // sticky nav function & animation start
@@ -35,8 +37,19 @@ const NavBar = () => {
                     <Button variant="outline-success">Search</Button>
                 </Form>
                 <Nav className="ml-auto">
-                <Link className="nav-link nav-text" to="/login">Login</Link>
-                <Link className="nav-link nav-text" to="/cart"><FontAwesomeIcon icon={faShoppingCart} /></Link>
+                <Link className="nav-link nav-text mr-2" to="/signIn">
+                  Login
+                </Link>
+                <Link  className="nav-link nav-text mr-2" to="/notification">
+                    <Badge badgeContent={1} color="secondary">
+                      <NotificationsIcon />
+                    </Badge>
+                </Link>
+                <Link className="nav-link nav-text mr-2" to="/cart">
+                    <Badge badgeContent={1} color="secondary">
+                      <ShoppingCartIcon />
+                    </Badge>
+                </Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

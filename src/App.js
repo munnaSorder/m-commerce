@@ -8,14 +8,24 @@ import {
   Link
 } from "react-router-dom";
 import Home from './Components/Home/Home';
+import SignIn from './Components/Auth/SignIn';
+import SignUp from './Components/Auth/SignUp';
 
 function App() {
   return (
    <Router>
-     <Route path="/">
-     <NavBar />
-     <Home />
-     </Route>
+    <NavBar />
+     <Switch>
+      <Route exact path="/">
+        <Home />
+      </Route>
+      <Route path="/signIn">
+        <SignIn />
+      </Route>
+      <Route path="/signUp">
+        <SignUp />
+      </Route>
+     </Switch>
    </Router>
   );
 }
