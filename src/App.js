@@ -4,8 +4,7 @@ import NavBar from './Components/Nav/Nav';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 import Home from './Components/Home/Home';
 import SignIn from './Components/Auth/SignIn';

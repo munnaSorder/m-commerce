@@ -40,13 +40,13 @@ const NavBar = () => {
                 <Link className="nav-link nav-text mr-2" to="/signIn">
                   Login
                 </Link>
-                <Link  className="nav-link nav-text mr-2" to="/notification">
-                    <Badge badgeContent={1} color="secondary">
+                <Link style={{cursor: 'no-drop'}}  className="nav-link nav-text mr-2" to="#">
+                    <Badge badgeContent={111} color="secondary">
                       <NotificationsIcon />
                     </Badge>
                 </Link>
-                <Link className="nav-link nav-text mr-2" to="/cart">
-                    <Badge badgeContent={1} color="secondary">
+                <Link style={{cursor: 'no-drop'}} className="nav-link nav-text mr-2" to="#">
+                    <Badge badgeContent={111} color="secondary">
                       <ShoppingCartIcon />
                     </Badge>
                 </Link>
