@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useFormik } from 'formik';
+import { createAccount } from './loginManagment';
 
 function Copyright() {
   return (
@@ -58,7 +59,7 @@ export default function SignUp() {
   }
 
   const onSubmit = values => {
-    console.log(values);
+    createAccount(values.email, values.password);
   }
   const validate = values => {
     let errors = {}
@@ -117,9 +118,10 @@ export default function SignUp() {
                 autoFocus
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
               {
-                formik.errors ? <div style={{color : 'red'}}>{formik.errors.firstName}</div> : null
+                formik.touched.firstName && formik.errors.firstName ? <div style={{color : 'red'}}>{formik.errors.firstName}</div> : null
               }
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -133,9 +135,10 @@ export default function SignUp() {
                 autoComplete="lname"
                 value={formik.values.lastName}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
               {
-                formik.errors ? <div style={{color : 'red'}}>{formik.errors.lastName}</div> : null
+                formik.touched.lastName && formik.errors.lastName ? <div style={{color : 'red'}}>{formik.errors.lastName}</div> : null
               }
             </Grid>
             <Grid item xs={12}>
@@ -149,9 +152,10 @@ export default function SignUp() {
                 autoComplete="email"
                 value={formik.values.email}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
               {
-                formik.errors ? <div style={{color : 'red'}}>{formik.errors.email}</div> : null
+                formik.touched.email && formik.errors.email ? <div style={{color : 'red'}}>{formik.errors.email}</div> : null
               }
             </Grid>
             <Grid item xs={12}>
@@ -166,9 +170,10 @@ export default function SignUp() {
                 autoComplete="current-password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
               {
-                formik.errors ? <div style={{color : 'red'}}>{formik.errors.password}</div> : null
+                formik.touched.password && formik.errors.password ? <div style={{color : 'red'}}>{formik.errors.password}</div> : null
               }
             </Grid>
             <Grid item xs={12}>

@@ -14,6 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons";
 import { useFormik } from 'formik';
+import { googleLoginWithPopup, logInWithFacebook, signInWithEmailAndPassword } from './loginManagment';
+
 
 function Copyright() {
   return (
@@ -54,7 +56,7 @@ const initialValues = {
 }
 
 const onSubmit = values => {
-  console.log(values);
+  signInWithEmailAndPassword(values.email, values.password);
 }
 
 const validate = values => {
@@ -76,13 +78,21 @@ const validate = values => {
   return errors;
 }
 export default function SignIn() {
+
+  const handleGoogleSignIn = () => {
+    googleLoginWithPopup();
+  }
+
+  const handleFbLogin = () => {
+    logInWithFacebook();
+  }
   const classes = useStyles();
   const formik = useFormik({
     initialValues,
     onSubmit,
     validate,
   });
-console.log(formik.values);
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -106,9 +116,10 @@ console.log(formik.values);
             autoFocus
             value={formik.values.email}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
           {
-            formik.errors ? <div style={{color: 'red'}}>{formik.errors.email}</div> : null
+            formik.touched.email && formik.errors.email ? <div style={{color: 'red'}}>{formik.errors.email}</div> : null
           }
           <TextField
             variant="outlined"
@@ -122,9 +133,10 @@ console.log(formik.values);
             autoComplete="current-password"
             value={formik.values.password}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
           {
-            formik.errors ? <div style={{color : 'red'}}>{formik.errors.password}</div> : null
+            formik.touched.password && formik.errors.password ? <div style={{color : 'red'}}>{formik.errors.password}</div> : null
           }
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -154,10 +166,10 @@ console.log(formik.values);
         </form>
       </div>
       <div className="d-flex mt-2">
-        <FacebookLoginButton onClick={() => alert("Hello")}>
+        <FacebookLoginButton onClick={ handleFbLogin }>
           <span>Facebook</span>
         </FacebookLoginButton>
-        <GoogleLoginButton onClick={() => alert("Hello")} >
+        <GoogleLoginButton onClick={ handleGoogleSignIn } >
           <span>Google</span>
         </GoogleLoginButton>
       </div>
