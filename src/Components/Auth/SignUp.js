@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import{ Link }from 'react-router-dom';
+import{ Link, useHistory }from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useFormik } from 'formik';
-import { createAccount } from './loginManagment';
+import { createAccount } from './loginManagement';
 
 function Copyright() {
   return (
@@ -49,7 +49,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignUp() {
+  const [success, setSuccess] = useState('');
   const classes = useStyles();
+  let history = useHistory()
 
   const initialValues = {
     firstName:'',
@@ -59,8 +61,20 @@ export default function SignUp() {
   }
 
   const onSubmit = values => {
-    createAccount(values.email, values.password);
+    const fullName = values.firstName + ' ' + values.lastName;
+    createAccount(fullName, values.email, values.password)
+    .then((res) => {
+      if(res === undefined) {
+        setSuccess('');
+        alert('Account Created Success');
+        history.push('/SignIn');
+
+      }else{
+        setSuccess(res)
+      }
+    })
   }
+
   const validate = values => {
     let errors = {}
 
@@ -104,6 +118,9 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
+        {
+          success.length > 0 && <h6 style={{color: 'red'}}>{success}</h6>
+        }
         <form className={classes.form} onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>

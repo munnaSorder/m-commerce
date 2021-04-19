@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -14,7 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons";
 import { useFormik } from 'formik';
-import { googleLoginWithPopup, logInWithFacebook, signInWithEmailAndPassword } from './loginManagment';
+import { googleLoginWithPopup, initialLoginMethod, logInWithFacebook, signInWithEmailAndPassword } from './loginManagement';
+import { UserContext } from '../../App';
 
 
 function Copyright() {
@@ -55,10 +56,6 @@ const initialValues = {
   password: ''
 }
 
-const onSubmit = values => {
-  signInWithEmailAndPassword(values.email, values.password);
-}
-
 const validate = values => {
 
   let errors = {}
@@ -78,14 +75,40 @@ const validate = values => {
   return errors;
 }
 export default function SignIn() {
+  let history = useHistory();
+  let location = useLocation();
+  let { from } = location.state || { from: { pathname: "/" } };
+  const [user, setUser] = useContext(UserContext);
+  initialLoginMethod();
 
   const handleGoogleSignIn = () => {
-    googleLoginWithPopup();
+    googleLoginWithPopup()
+    .then(res => {
+      setUser(res)
+      history.replace(from);
+    })
   }
 
   const handleFbLogin = () => {
-    logInWithFacebook();
+    logInWithFacebook()
+    .then(res => {
+      if (res) {
+        setUser(res);
+        history.replace(from);
+      }else{alert('email already exists or some problem')}
+    })
   }
+
+  const onSubmit = values => {
+    signInWithEmailAndPassword(values.email, values.password)
+    .then(res => {
+      if(res){
+        setUser(res);
+        history.replace(from);
+      }else{alert("Invalid email or password")}
+    })
+  }
+
   const classes = useStyles();
   const formik = useFormik({
     initialValues,

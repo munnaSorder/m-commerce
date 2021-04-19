@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Form, FormControl, Navbar, Button, Nav } from 'react-bootstrap';
 import logo from '../../images/logo/logo.png'
 import './nav.css'
@@ -6,8 +6,12 @@ import { Link } from 'react-router-dom';
 import { Badge } from '@material-ui/core';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { UserContext } from '../../App';
+import { signOut } from '../Auth/loginManagement';
 
 const NavBar = () => {
+  const [user, setUser] = useContext(UserContext)
+  console.log(user);
 
     // sticky nav function & animation start
     const [navBackground, setNavBackground] = useState(false)
@@ -27,6 +31,10 @@ const NavBar = () => {
     }, [])
     // sticky nav function & animation end
 
+
+    const logout = () => {
+      signOut();
+    }
     return (
         <Navbar className="nav-container" sticky="top" expand="lg" style={{ transition: '1s ease',backgroundColor: navBackground ? '#F8F9FA' : 'transparent'}}>
             <Link className="nav-brand" to="/"><img className="image-fluid w-50" src={logo} alt=""/></Link>
@@ -37,9 +45,17 @@ const NavBar = () => {
                     <Button variant="outline-success">Search</Button>
                 </Form>
                 <Nav className="ml-auto">
-                <Link className="nav-link nav-text mr-2" to="/signIn">
-                  Login
-                </Link>
+                {
+                  user.email ? <Link className="nav-link nav-text mr-2" to="/signIn">
+                    {user.displayName}
+                  </Link> :
+                  <Link className="nav-link nav-text mr-2" to="/signIn">
+                    Login
+                  </Link>
+                }
+                <Link onClick={logout} className="nav-link nav-text mr-2">
+                    Logout
+                  </Link>
                 <Link style={{cursor: 'no-drop'}}  className="nav-link nav-text mr-2" to="#">
                     <Badge badgeContent={111} color="secondary">
                       <NotificationsIcon />
