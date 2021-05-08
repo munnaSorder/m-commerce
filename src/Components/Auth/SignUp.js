@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useFormik } from 'formik';
 import { createAccount } from './loginManagement';
+import { CircularProgress } from '@material-ui/core';
 
 function Copyright() {
   return (
@@ -30,7 +31,7 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(1),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -50,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false)
   const classes = useStyles();
   let history = useHistory()
 
@@ -61,15 +63,18 @@ export default function SignUp() {
   }
 
   const onSubmit = values => {
+    setLoading(true)
     const fullName = values.firstName + ' ' + values.lastName;
     createAccount(fullName, values.email, values.password)
     .then((res) => {
       if(res === undefined) {
+        setLoading(false)
         setSuccess('');
         alert('Account Created Success');
         history.push('/SignIn');
 
       }else{
+        setLoading(false)
         setSuccess(res)
       }
     })
@@ -118,6 +123,11 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
+        <div>
+          { 
+            loading ? <CircularProgress /> : null
+          }
+        </div>
         {
           success.length > 0 && <h6 style={{color: 'red'}}>{success}</h6>
         }

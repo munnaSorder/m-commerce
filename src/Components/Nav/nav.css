@@ -2,13 +2,17 @@
     font-size: 22px;
     color: #333!important;
 }
-.nav-container{
+.nav-container {
     box-shadow: 0px 0px 15px 0px rgb(230 230 230);
 }
-.nav-container{
+.sub-nav-item {
+    padding: 5px 15px;
+    font-size: 18px;
+    color: #444444;
+    text-decoration: none;
+}
+.sub-nav-container {
+    height: 55px;
     width:100%;
     overflow: auto
-}
-.nav-container > Link{
-    color: #362121;
 }

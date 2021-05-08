@@ -6,8 +6,6 @@ import { firebaseConfig } from '../../firebase.config';
 export const initialLoginMethod = () => {
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
-  }else {
-    firebase.app(); // if already initialized, use that one
   }
 }
 
@@ -81,12 +79,14 @@ export const signInWithEmailAndPassword = (email, password) => {
     return userInfo;
   })
   .catch((error) => {
-    console.log(error.message);
-    return false;
+    const errorMessage = error.message
+    console.log(errorMessage);
+    return errorMessage;
   });
 }
 
 export const signOut = () => {
+  initialLoginMethod();
   firebase.auth().signOut().then(() => {
     localStorage.removeItem('userInfo')
     window.location.reload();
@@ -105,4 +105,13 @@ const updateUserInfo = (name) => {
   }).catch(function(error) {
     // An error happened.
   })
+}
+
+
+export const getJwtToken = () => {
+  firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+    sessionStorage.setItem('jwt_token', idToken)
+  }).catch(function(error) {
+    console.log(error);
+  });
 }

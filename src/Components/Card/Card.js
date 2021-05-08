@@ -1,40 +1,99 @@
 import React, { useEffect, useState } from 'react';
 import './card.css';
-import { addToDatabaseCart, getDatabaseCart } from '../databaseManager/databaseManager';
-import fakeData from '../../fakeData';
 import CardItem from './CardItem';
 import { useHistory } from 'react-router';
 
 
 const Card = (props) => {
     const history = useHistory();
-    const data = props.data;
+    const cartReRender = props.data;
     const [cart, setCart] = useState([]);
-    
-   console.log(cart);
 
+    // load cart product
     useEffect(() => {
-        const cardItems = getDatabaseCart();
-        const itemsKeys = Object.keys(cardItems)
-        const cardProducts = itemsKeys.map(key => {
-            const product = fakeData.find(product => product.key === key)
-            product.quantity = cardItems[key]
-            return product;
-        });
-        setCart(cardProducts);
-    },[data])
+        fetch('http://localhost:5252/getCart')
+        .then(res => res.json())
+        .then(data => setCart(data))
+    },[cartReRender])
 
-    const checkout = () => {
-        history.push('/checkout')
+
+    // product increased function
+    const productIncrease = (key, name, img, price, quantity) => {
+        let count = quantity;
+        count = count + 1;
+        const updateQuantity = { 
+            key: key,
+            name: name,
+            img: img,
+            price: price,
+            quantity: count
+        }
+        fetch(`http://localhost:5252/updateCart/${key}`,{
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(updateQuantity)
+        })
+        .then(res => res.json())
+        .then(data => cartReload())
+
     }
+
+
+    // product decrease function
+    const productDecrease = (key, name, img, price, quantity) => {
+        let count = quantity;
+        count = count - 1;
+        const updateQuantity = { 
+            key: key,
+            name: name,
+            img: img,
+            price: price,
+            quantity: count
+        }
+        fetch(`http://localhost:5252/updateCart/${key}`,{
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(updateQuantity)
+        })
+        .then(res => res.json())
+        .then(data => cartReload())
+    }
+
+    // product delete function
+    const deleteItem = (key) => {
+        fetch(`http://localhost:5252/deleteItem/${key}`,{
+            method: 'DELETE',
+        })
+        .then(res => res.json())
+        .then(result => cartReload())
+    }
+
+    const updateFunctions = { 
+        productIncrease,
+        productDecrease,
+        deleteItem
+    }
+
+    // cart re render function
+    const cartReload = () => {
+        fetch('http://localhost:5252/getCart')
+        .then(res => res.json())
+        .then(data => {setCart(data)})
+    }
+
+    // checkout page route
+    const checkout = () => {
+        history.push('/checkout')}
     
+    // total price calculate area start
     const totalPrice = cart.reduce((total, price) => {
         return total + price.price * price.quantity;
     },0)
 
     let vat = Math.round(0.12 * totalPrice);
     let subTotal = Math.round(totalPrice);
-    
+    // total price calculate area end
+
     return (
         <div className="card-container">
             <h5 className="card-title">Your Order: </h5>
@@ -42,7 +101,7 @@ const Card = (props) => {
                     cart.length <= 0 ? <h1>Your Cart is empty</h1> : 
                     <div className="item">
                         {
-                            cart.map(product => <CardItem product={product} />)
+                            cart.map(( product, index ) => <CardItem updateFunctions={updateFunctions} product={product} key={index} />)
                         }
                     </div>
                 }

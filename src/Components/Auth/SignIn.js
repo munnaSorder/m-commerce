@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -14,8 +14,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons";
 import { useFormik } from 'formik';
-import { googleLoginWithPopup, initialLoginMethod, logInWithFacebook, signInWithEmailAndPassword } from './loginManagement';
+import { getJwtToken, googleLoginWithPopup, initialLoginMethod, logInWithFacebook, signInWithEmailAndPassword } from './loginManagement';
 import { UserContext } from '../../App';
+import { CircularProgress } from '@material-ui/core';
+import { firebase } from '@firebase/app'
 
 
 function Copyright() {
@@ -33,7 +35,7 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(1),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -77,6 +79,9 @@ const validate = values => {
 export default function SignIn() {
   let history = useHistory();
   let location = useLocation();
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false)
   let { from } = location.state || { from: { pathname: "/" } };
   const [user, setUser] = useContext(UserContext);
   initialLoginMethod();
@@ -85,6 +90,7 @@ export default function SignIn() {
     googleLoginWithPopup()
     .then(res => {
       setUser(res)
+      getJwtToken()
       history.replace(from);
     })
   }
@@ -94,19 +100,28 @@ export default function SignIn() {
     .then(res => {
       if (res) {
         setUser(res);
+        getJwtToken()
         history.replace(from);
       }else{alert('email already exists or some problem')}
     })
   }
 
   const onSubmit = values => {
+    setLoading(true);
     signInWithEmailAndPassword(values.email, values.password)
     .then(res => {
-      if(res){
+      if(res === undefined){
+        setLoading(false)
+        setSuccess('')
         setUser(res);
+        getJwtToken()
         history.replace(from);
-      }else{alert("Invalid email or password")}
+      }else{
+        setLoading(false)
+        setSuccess(res)
+      }
     })
+    .catch(err => console.log(err))
   }
 
   const classes = useStyles();
@@ -124,8 +139,16 @@ export default function SignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign in          
         </Typography>
+        <div>
+          {
+            loading ? <CircularProgress /> : null
+          }
+        </div>
+        {
+          success.length > 0 && <p style={{color : 'red'}}>{success}</p>
+        }
         <form className={classes.form} onSubmit={formik.handleSubmit}>
           <TextField
             variant="outlined"
@@ -144,20 +167,24 @@ export default function SignIn() {
           {
             formik.touched.email && formik.errors.email ? <div style={{color: 'red'}}>{formik.errors.email}</div> : null
           }
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
+          <div style={{position: 'relative'}}s>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type={visible ? "text" : "password"}
+              id="password"
+              autoComplete="current-password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            <button style={{ position: 'absolute', top:' 32px',right:'12px',border: 'none',background: '#26b126',borderRadius: '20px',color: 'white'}} onClick={() => setVisible(visible ? false : true)}>{visible ? 'hidden' : 'visible'}</button>
+          </div>
+          
           {
             formik.touched.password && formik.errors.password ? <div style={{color : 'red'}}>{formik.errors.password}</div> : null
           }
